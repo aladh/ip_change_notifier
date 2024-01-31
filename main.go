@@ -10,6 +10,8 @@ import (
 	"github.com/aladh/ip_change_notifier/webhook"
 )
 
+const outputFilename = "ip.txt"
+
 var domain string
 var previousIP string
 var webhookURL string
@@ -47,7 +49,7 @@ func main() {
 		log.Fatalln("Error sending webhook:", err)
 	}
 
-	file, err := os.Create("ip.txt")
+	file, err := os.Create(outputFilename)
 	if err != nil {
 		log.Fatalln("Error creating file:", err)
 	}
