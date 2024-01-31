@@ -21,14 +21,20 @@ binary:
 check-availability:
   stage: run
   image: golang:1.21-bookworm
+  variables:
+    OUTPUT_FILENAME: ip.txt
+    PREVIOUS_IP_FILENAME: previous_ip.txt
   before_script:
     - go build
   script:
     - |
-      if [ -f "ip.txt" ]; then
-        ./ip_change_notifier -d $DOMAIN -w $WEBHOOK_URL -p $(cat "ip.txt")
+      if [ -f "$PREVIOUS_IP_FILENAME" ]; then
+        ./ip_change_notifier -d $DOMAIN -w $WEBHOOK_URL -o $OUTPUT_FILENAME -p $(cat "$PREVIOUS_IP_FILENAME")
       else
-        ./ip_change_notifier -d $DOMAIN -w $WEBHOOK_URL
+        ./ip_change_notifier -d $DOMAIN -w $WEBHOOK_URL -o $OUTPUT_FILENAME
       fi
+  artifacts:
+    paths:
+      - $OUTPUT_FILENAME
   only:
     - schedules
