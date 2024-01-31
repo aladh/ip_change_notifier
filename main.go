@@ -49,15 +49,24 @@ func main() {
 	}
 
 	if outputFilename != "" {
-		file, err := os.Create(outputFilename)
-		if err != nil {
-			log.Fatalln("Error creating file:", err)
-		}
-		defer file.Close()
-
-		_, err = file.WriteString(ipString)
+		err = writeToFile(outputFilename, ipString)
 		if err != nil {
 			log.Fatalln("Error writing to file:", err)
 		}
 	}
+}
+
+func writeToFile(filename, content string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return fmt.Errorf("error creating file: %w", err)
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(content)
+	if err != nil {
+		return fmt.Errorf("error writing to file: %w", err)
+	}
+
+	return nil
 }
