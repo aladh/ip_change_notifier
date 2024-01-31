@@ -56,5 +56,8 @@ func main() {
 		defer file.Close()
 
 		_, err = file.WriteString(ipString)
+		if err != nil {
+			log.Fatalln("Error writing to file:", err)
+		}
 	}
 }
