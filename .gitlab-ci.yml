@@ -1,0 +1,34 @@
+stages:
+  - test
+  - build
+  - run
+
+lint:
+  stage: test
+  image: golangci/golangci-lint:v1.41.1
+  script:
+    - golangci-lint run -v -E gofmt -E goconst -E gocritic -E gocognit -E gocyclo
+  except:
+    - schedules
+
+binary:
+  stage: build
+  image: golang:1.21-bookworm
+  script: go build
+  except:
+    - schedules
+
+check-availability:
+  stage: run
+  image: golang:1.21-bookworm
+  before_script:
+    - go build
+  script:
+    - |
+      if [ -f "ip.txt" ]; then
+        ./ip_change_notifier -d $DOMAIN -w $WEBHOOK_URL -p $(cat "ip.txt")
+      else
+        ./ip_change_notifier -d $DOMAIN -w $WEBHOOK_URL
+      fi
+  only:
+    - schedules
