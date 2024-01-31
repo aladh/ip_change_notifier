@@ -35,6 +35,14 @@ func main() {
 	}
 
 	ipString := ips[0].String()
+
+	if outputFilename != "" {
+		err = writeToFile(outputFilename, ipString)
+		if err != nil {
+			log.Fatalln("Error writing to file:", err)
+		}
+	}
+
 	if previousIP == ipString {
 		log.Println("IP address has not changed")
 		return
@@ -46,13 +54,6 @@ func main() {
 	err = webhook.Send(webhookURL, message)
 	if err != nil {
 		log.Fatalln("Error sending webhook:", err)
-	}
-
-	if outputFilename != "" {
-		err = writeToFile(outputFilename, ipString)
-		if err != nil {
-			log.Fatalln("Error writing to file:", err)
-		}
 	}
 }
 
